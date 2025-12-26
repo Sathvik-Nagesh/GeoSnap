@@ -1,0 +1,5 @@
+{
+  "name": "GeoSnap",
+  "description": "A privacy-first tool to extract location data from photos or guess locations using AI.",
+  "requestFramePermissions": []
+}
