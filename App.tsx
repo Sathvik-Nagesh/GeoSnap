@@ -633,34 +633,122 @@ function App() {
 
                   <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-5">
                     {!data.gpsFound && !data.aiGuessed ? (
-                      <motion.div 
-                        className="alert-warning p-5"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                      >
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="p-2 rounded-lg bg-amber-500/20">
-                            <AlertCircle size={20} className="text-amber-400" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-amber-200">No GPS Data Found</h3>
-                            <p className="text-xs text-amber-200/60">Metadata stripped or unavailable</p>
-                          </div>
-                        </div>
-                        <p className="text-xs text-amber-200/70 mb-5 leading-relaxed">
-                          This image doesn't contain standard location metadata. Common in screenshots or social media downloads.
-                        </p>
-                        
-                        <motion.button 
-                          onClick={handleAiGuess}
-                          className="btn-ai w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                      <>
+                        <motion.div 
+                          className="alert-warning p-5"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
                         >
-                          <Sparkles size={16} />
-                          Guess Location with AI
-                        </motion.button>
-                      </motion.div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-amber-500/20">
+                              <AlertCircle size={20} className="text-amber-400" />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-amber-200">No GPS Data Found</h3>
+                              <p className="text-xs text-amber-200/60">Metadata stripped or unavailable</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-amber-200/70 mb-5 leading-relaxed">
+                            This image doesn't contain standard location metadata. Common in screenshots or social media downloads.
+                          </p>
+                          
+                          <motion.button 
+                            onClick={handleAiGuess}
+                            className="btn-ai w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Sparkles size={16} />
+                            Guess Location with AI
+                          </motion.button>
+                        </motion.div>
+
+                        {/* Show available metadata even without GPS */}
+                        {(data.exifDate || data.exifDetails) && (
+                          <div className="space-y-5">
+                            {/* Date & Time */}
+                            {data.exifDate && (
+                              <div className="stat-card flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="p-2 rounded-lg bg-emerald-500/10">
+                                    <Calendar size={14} className="text-emerald-400" />
+                                  </div>
+                                  <span className="font-medium text-zinc-200 text-sm">
+                                    {data.exifDate.toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                                  </span>
+                                </div>
+                                <div className="w-1 h-1 rounded-full bg-zinc-700" />
+                                <div className="flex items-center gap-2">
+                                  <Clock size={14} className="text-emerald-400" />
+                                  <span className="font-medium text-zinc-200 text-sm">
+                                    {data.exifDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Extended EXIF Data */}
+                            {data.exifDetails && (
+                              <div className="pt-2">
+                                <h3 className="text-zinc-400 text-xs uppercase tracking-wider font-bold mb-4 flex items-center gap-2">
+                                  <Camera size={12} className="text-zinc-500" /> Camera Details
+                                </h3>
+                                 
+                                <div className="info-card rounded-xl overflow-hidden">
+                                  {(data.exifDetails.make || data.exifDetails.model) && (
+                                    <div className="p-4 border-b border-zinc-800/50 flex items-center gap-4">
+                                      <div className="p-2.5 rounded-lg bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50">
+                                        <Camera size={18} className="text-zinc-400" />
+                                      </div>
+                                      <div className="flex-1">
+                                        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Device</p>
+                                        <p className="text-sm font-semibold text-zinc-100">
+                                          {[data.exifDetails.make, data.exifDetails.model].filter(Boolean).join(' ')}
+                                        </p>
+                                        {data.exifDetails.lensModel && (
+                                          <p className="text-xs text-zinc-500 mt-0.5">{data.exifDetails.lensModel}</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                    
+                                  <div className="grid grid-cols-3 divide-x divide-zinc-800/30">
+                                    <div className="p-4 text-center hover:bg-zinc-800/20 transition-colors">
+                                      <Aperture size={16} className="mx-auto text-emerald-500/70 mb-2" />
+                                      <p className="text-[10px] text-zinc-500 uppercase font-bold">Aperture</p>
+                                      <p className="text-sm font-semibold text-white mt-1">
+                                        {data.exifDetails.fNumber ? `ƒ/${data.exifDetails.fNumber}` : '-'}
+                                      </p>
+                                    </div>
+                                    <div className="p-4 text-center hover:bg-zinc-800/20 transition-colors">
+                                      <Zap size={16} className="mx-auto text-amber-500/70 mb-2" />
+                                      <p className="text-[10px] text-zinc-500 uppercase font-bold">ISO</p>
+                                      <p className="text-sm font-semibold text-white mt-1">
+                                        {data.exifDetails.iso || '-'}
+                                      </p>
+                                    </div>
+                                    <div className="p-4 text-center hover:bg-zinc-800/20 transition-colors">
+                                      <Timer size={16} className="mx-auto text-indigo-500/70 mb-2" />
+                                      <p className="text-[10px] text-zinc-500 uppercase font-bold">Shutter</p>
+                                      <p className="text-sm font-semibold text-white mt-1">
+                                        {formatExposureTime(data.exifDetails.exposureTime) || '-'}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  {data.exifDetails.focalLength && (
+                                    <div className="p-3 bg-zinc-900/30 border-t border-zinc-800/30 text-center">
+                                      <p className="text-[10px] text-zinc-400">
+                                        <span className="font-bold uppercase mr-2 text-zinc-500">Focal Length</span> 
+                                        <span className="font-semibold text-zinc-200">{data.exifDetails.focalLength}mm</span>
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="space-y-5">
                         {/* Location Header */}
@@ -698,7 +786,7 @@ function App() {
                             <div className="flex items-center gap-2">
                               <Clock size={14} className="text-emerald-400" />
                               <span className="font-medium text-zinc-200 text-sm">
-                                {data.exifDate.toLocaleTimeString(undefined, { timeStyle: 'short' })}
+                                {data.exifDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                               </span>
                             </div>
                           </div>
