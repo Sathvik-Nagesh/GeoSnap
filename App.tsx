@@ -45,6 +45,14 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const stripperInputRef = useRef<HTMLInputElement>(null);
 
+  // Handle keyboard interaction for accessible buttons
+  const handleKeyDown = (e: React.KeyboardEvent, callback: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      callback();
+    }
+  };
+
   // Show toast notification
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
@@ -269,6 +277,10 @@ function App() {
         <motion.div 
           className="flex items-center gap-3 cursor-pointer group" 
           onClick={resetApp}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => handleKeyDown(e, resetApp)}
+          aria-label="Reset application"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -346,8 +358,12 @@ function App() {
 
               {!stripperImage ? (
                 <motion.div 
-                  className="upload-zone gradient-border w-full aspect-[2/1] flex flex-col items-center justify-center cursor-pointer group"
+                  className="upload-zone gradient-border w-full aspect-[2/1] flex flex-col items-center justify-center cursor-pointer group focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
                   onClick={() => stripperInputRef.current?.click()}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => handleKeyDown(e, () => stripperInputRef.current?.click())}
+                  aria-label="Upload image to strip EXIF data"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
@@ -491,11 +507,15 @@ function App() {
 
               {/* Premium Upload Zone */}
               <motion.div 
-                className={`upload-zone gradient-border w-full max-w-xl mx-auto aspect-[2/1] flex flex-col items-center justify-center cursor-pointer group ${isDraggingUrl ? 'border-indigo-500 bg-indigo-500/10' : ''}`}
+                className={`upload-zone gradient-border w-full max-w-xl mx-auto aspect-[2/1] flex flex-col items-center justify-center cursor-pointer group focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${isDraggingUrl ? 'border-indigo-500 bg-indigo-500/10' : ''}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => handleKeyDown(e, () => fileInputRef.current?.click())}
+                aria-label="Upload image to analyze"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 }}
