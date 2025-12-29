@@ -51,6 +51,7 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
                     className="p-2 hover:bg-zinc-800/50 rounded-lg transition-colors group"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+                    aria-label="Close modal"
                   >
                     <X size={20} className="text-zinc-500 group-hover:text-white transition-colors" />
                   </motion.button>
